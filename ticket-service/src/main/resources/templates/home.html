@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>UTS Home</title>
+<style>
+body { background:#ffe6ee; font-family:Arial; margin:0;}
+.header { background:#d6336c; color:white; padding:15px; text-align:center;}
+.container { display:flex; justify-content:center; margin-top:30px;}
+.card { background:white; width:420px; padding:25px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+.menu { display:flex; justify-content:space-between; margin-bottom:20px;}
+.menu a { text-decoration:none; color:#d6336c; font-weight:bold; font-size:13px;}
+button { background:#d6336c; color:white; border:none; padding:10px; width:100%; border-radius:6px; margin-top:15px;}
+select { width:100%; padding:8px; margin-top:5px;}
+.error { color:red; font-size:13px; margin-top:10px;}
+</style>
+</head>
+<body>
+
+<div class="header">UTS - IR Unreserved Ticketing</div>
+
+<div class="container">
+<div class="card">
+
+<div class="menu">
+    <a href="#">Profile</a>
+    <a href="/history?userId=1">Booking History</a>
+    <a href="#">Show Ticket</a>
+</div>
+
+<!-- LINE SELECTION FORM (GET) -->
+<form action="/home" method="get">
+    <label>Line</label>
+    <select name="line" onchange="this.form.submit()">
+        <option value="Western"
+            th:selected="${selectedLine == 'Western'}">Western</option>
+        <option value="Central"
+            th:selected="${selectedLine == 'Central'}">Central</option>
+        <option value="Harbour"
+            th:selected="${selectedLine == 'Harbour'}">Harbour</option>
+    </select>
+</form>
+
+<br>
+
+<!-- MAIN BOOKING FORM (POST) -->
+<form action="/details" method="post">
+
+    <input type="hidden" name="line" th:value="${selectedLine}" />
+
+    <label>Source</label>
+    <select name="source" required>
+        <option th:each="station : ${stations}"
+                th:value="${station}"
+                th:text="${station}">
+        </option>
+    </select>
+
+    <br><br>
+
+    <label>Destination</label>
+    <select name="destination" required>
+        <option th:each="station : ${stations}"
+                th:value="${station}"
+                th:text="${station}">
+        </option>
+    </select>
+
+    <button type="submit">GET FARE</button>
+
+</form>
+
+<!-- ERROR DISPLAY -->
+<div th:if="${error}" class="error" th:text="${error}"></div>
+
+</div>
+</div>
+
+</body>
+</html>

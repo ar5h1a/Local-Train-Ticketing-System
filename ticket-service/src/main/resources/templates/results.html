@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Ticket Summary</title>
+<style>
+body { background:#ffe6ee; font-family:Arial;}
+.container { display:flex; justify-content:center; margin-top:40px;}
+.card { background:white; width:420px; padding:25px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center;}
+button { background:#d6336c; color:white; border:none; padding:10px; width:100%; border-radius:6px; margin-top:15px;}
+</style>
+</head>
+<body>
+
+<div class="container">
+<div class="card">
+
+<p><b>Source:</b> <span th:text="${ticket.sourceStation}"></span></p>
+<p><b>Destination:</b> <span th:text="${ticket.destinationStation}"></span></p>
+<p><b>Line:</b> <span th:text="${ticket.line}"></span></p>
+<p><b>Class:</b> <span th:text="${ticket.travelClass}"></span></p>
+<p><b>Type:</b> <span th:text="${ticket.type}"></span></p>
+<p><b>Persons:</b> <span th:text="${ticket.numberOfPersons}"></span></p>
+
+<hr>
+
+<h3>Total Price: ₹ <span th:text="${ticket.price}"></span></h3>
+
+<a href="/#">
+    <button>PAY NOW</button>
+</a>
+
+</div>
+</div>
+
+</body>
+</html>
