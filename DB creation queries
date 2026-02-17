@@ -1,0 +1,59 @@
+CREATE TABLE trains (
+    train_id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    line VARCHAR(255),
+    stations TEXT,
+    frequency INTEGER,
+    first_departure VARCHAR(20),
+    last_departure VARCHAR(20)
+);
+
+INSERT INTO trains (name, line, stations, frequency, first_departure, last_departure)
+VALUES
+(
+'Churchgate-Virar Slow',
+'Western',
+'Churchgate, Marine Lines, Charni Road, Grant Road, Mumbai Central, Mahalaxmi, Lower Parel, Elphinstone Road, Dadar, Matunga Road, Mahim, Bandra, Khar Road, Santacruz, Andheri, Jogeshwari, Ram Mandir, Goregoan, Malad, Kandivali, Borivali, Dahisar, Mira Road, Bhayandar, Naigaon, Vasai, Nallaspara, Virar',
+5,
+'04:30',
+'00:30'
+),
+(
+'CST-Kalyan Slow',
+'Central',
+'CST, Masjid, Sandhurst, Byculla, Chinchpokli, Currey Road, Parel, Dadar, Matunga, Sion, Kurla, Vidyavihar, Ghatkopar, Vikhroli, Kanjurmarg, Bhandup, Nahur, Mulund, Thane, Kalwa, Diva, Kopar, Dombivali, Thakurli, Kalyan',
+5,
+'04:00',
+'00:15'
+),
+(
+'CST-Panvel Slow',
+'Harbour',
+'CST, Masjid, Sandhurst Road, Dockyard Road, Reay Road, Cotton Green, Sewri, Wadala Road, GTBN, Chunabhatti, Kurla, Tilak Nagar, Chembur, Govandi, Mankhurd, Vashi, Sanpada, Juinagar, Nerul, Seawoods-Darave, Belapur CBD, Kharghar, Mansarovar, Khandeshwar, Panvel',
+10,
+'04:45',
+'23:45'
+);
+
+
+
+
+
+################################# FOR TICKETS ###################################################
+DROP TABLE IF EXISTS tickets;
+
+CREATE TABLE tickets (
+    ticket_id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT,
+    type VARCHAR,
+    valid_from DATE,
+    valid_till DATE,
+    status VARCHAR,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    source_station VARCHAR,
+    destination_station VARCHAR,
+    line VARCHAR,
+    price NUMERIC,
+    travel_class VARCHAR,
+    number_of_persons INTEGER
+);
