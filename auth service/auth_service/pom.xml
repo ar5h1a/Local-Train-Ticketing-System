@@ -90,11 +90,11 @@
 		    <artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
-		<dependency>
+		<!--<dependency>
 			<groupId>com.project</groupId>
-			<artifactId>gateway</artifactId>
+			<artifactId>api-gateway</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency>-->
 			<dependency>
 			    <groupId>io.jsonwebtoken</groupId>
 			    <artifactId>jjwt-api</artifactId>

@@ -28,7 +28,7 @@ public class TicketController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
 
-        Long userId = Long.parseLong(authentication.getName());
+    	Long userId = Long.parseLong(authentication.getName());
         List<Ticket> tickets = ticketService.getTicketsByUserFiltered(userId, fromDate, toDate);
         return ResponseEntity.ok(tickets);
     }

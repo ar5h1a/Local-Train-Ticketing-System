@@ -20,8 +20,10 @@ public class Train implements Serializable {
     @Column(name = "line")
     private String line;
 
+    
     @Column(name = "stations")
     private String stations;
+
 
     @Column(name = "frequency")
     private Integer frequency;

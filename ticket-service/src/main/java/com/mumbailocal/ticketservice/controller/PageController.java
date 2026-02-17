@@ -4,6 +4,7 @@ import com.mumbailocal.ticketservice.service.TicketService;
 import com.mumbailocal.ticketservice.entity.Ticket;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -72,7 +73,7 @@ public class PageController {
     
     // PAGE 3 – Results
     @PostMapping("/results")
-    public String results(@RequestParam Long userId,
+    public String results(Authentication authentication,
                           @RequestParam String source,
                           @RequestParam String destination,
                           @RequestParam String line,
@@ -80,6 +81,8 @@ public class PageController {
                           @RequestParam String travelClass,
                           @RequestParam(defaultValue = "1") int numberOfPersons,
                           Model model) {
+
+        Long userId = Long.parseLong(authentication.getName());
 
         Ticket ticket = ticketService.issueTicket(
                 userId,
@@ -96,6 +99,7 @@ public class PageController {
         return "results";
     }
 
+
     // Profile Page
     @GetMapping("/profile")
     public String profile() {
@@ -104,9 +108,15 @@ public class PageController {
 
     // Booking History
     @GetMapping("/history")
-    public String history(@RequestParam Long userId, Model model) {
+    public String history(Authentication authentication, Model model) {
+
+        Long userId = Long.parseLong(authentication.getName());
+
         List<Ticket> tickets = ticketService.getTicketsByUser(userId);
+
         model.addAttribute("tickets", tickets);
+
         return "history";
     }
+
 }

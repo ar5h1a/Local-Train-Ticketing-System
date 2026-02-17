@@ -15,37 +15,49 @@ import java.util.Collections;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+   
+	@Override
+	protected void doFilterInternal(HttpServletRequest request,
+	                                HttpServletResponse response,
+	                                FilterChain filterChain)
+	        throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+	    String token = null;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+	    // 1️⃣ Check Authorization header
+	    String authHeader = request.getHeader("Authorization");
+	    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+	        token = authHeader.substring(7);
+	    }
 
-        String token = authHeader.substring(7);
+	    // 2️⃣ If no header token, check cookies
+	    if (token == null && request.getCookies() != null) {
+	        for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+	            if ("jwt".equals(cookie.getName())) {
+	                token = cookie.getValue();
+	                break;
+	            }
+	        }
+	    }
 
-        try {
-            Claims claims = JwtUtil.validateToken(token);
-            Long userId = claims.get("userId", Long.class);
+	    // 3️⃣ If token exists → validate
+	    if (token != null) {
+	        try {
+	            Claims claims = JwtUtil.validateToken(token);
+	            Long userId = claims.get("userId", Long.class);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+	            UsernamePasswordAuthenticationToken authentication =
+	                    new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+	            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid or Expired JWT Token");
-            return;
-        }
+	        } catch (Exception e) {
+	            // ❌ DO NOT block request
+	            // just continue without authentication
+	        }
+	    }
 
-        filterChain.doFilter(request, response);
-    }
+	    // Always continue request
+	    filterChain.doFilter(request, response);
+	}
 }
-

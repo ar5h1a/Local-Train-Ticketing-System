@@ -91,12 +91,11 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         body: JSON.stringify({ username, password })
     });
 
-    if(res.ok){
-        const token = await res.text();
-        localStorage.setItem("jwt", token);
-        msg.innerText = "Login successful!";
-        msg.style.color = "green";
-    } else {
+	if(res.ok){
+	    window.location.href = "http://localhost:8083/home";
+	}
+
+    else {
         msg.innerText = "Invalid credentials";
         msg.style.color = "red";
     }

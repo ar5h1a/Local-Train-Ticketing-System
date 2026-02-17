@@ -5,6 +5,9 @@ import com.project.auth.dto.RegisterRequest;
 import com.project.auth.entity.User;
 import com.project.auth.repository.UserRepository;
 import com.project.auth.util.JwtUtil;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
@@ -26,12 +29,39 @@ public class AuthController {
         this.repo = repo;
         this.encoder = encoder;
     }
-
-
+    
     @GetMapping("/login")
     public String showLoginPage() {
         return "login";
     }
+
+
+    @PostMapping("/login")
+    @ResponseBody
+    public ResponseEntity<?> login(@RequestBody LoginRequest req,
+                                   HttpServletResponse response) {
+
+        User dbUser = repo.findByUsername(req.getUsername()).orElse(null);
+
+        if (dbUser == null)
+            return ResponseEntity.status(401).body("User not found");
+
+        if (!encoder.matches(req.getPassword(), dbUser.getPassword()))
+            return ResponseEntity.status(401).body("Invalid password");
+
+        String token = JwtUtil.generateToken(dbUser.getId(), dbUser.getUsername());
+
+        Cookie jwtCookie = new Cookie("jwt", token);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(60 * 60);
+
+        response.addCookie(jwtCookie);
+
+        return ResponseEntity.ok("Login successful");
+    }
+
+
 
     @GetMapping("/register")
     public String showRegisterPage() {
@@ -69,22 +99,21 @@ public class AuthController {
         return "redirect:/auth/login";
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-
-        User dbUser = repo.findByUsername(req.getUsername()).orElse(null);
-
-        if (dbUser == null)
-            return ResponseEntity.status(401).body("User not found");
-
-        if (!encoder.matches(req.getPassword(), dbUser.getPassword()))
-            return ResponseEntity.status(401).body("Invalid password");
-
-        String token = JwtUtil.generateToken(dbUser.getUsername());
-
-        return ResponseEntity.ok(token);
-    }
-
+	/*
+	 * @PostMapping("/login") public ResponseEntity<?> login(@RequestBody
+	 * LoginRequest req) {
+	 * 
+	 * User dbUser = repo.findByUsername(req.getUsername()).orElse(null);
+	 * 
+	 * if (dbUser == null) return ResponseEntity.status(401).body("User not found");
+	 * 
+	 * if (!encoder.matches(req.getPassword(), dbUser.getPassword())) return
+	 * ResponseEntity.status(401).body("Invalid password");
+	 * 
+	 * String token = JwtUtil.generateToken(dbUser.getId(), dbUser.getUsername());
+	 * 
+	 * return ResponseEntity.ok(token); }
+	 */
 
 
    /*
