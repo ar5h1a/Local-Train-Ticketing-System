@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body style="background:#ffe6ee; display:flex; justify-content:center; align-items:center; height:100vh; font-family:Arial;">
+
+<h2>Redirecting to payment gateway...</h2>
+
+<input type="hidden" id="sourceStation" th:value="${sourceStation}">
+<input type="hidden" id="destinationStation" th:value="${destinationStation}">
+<input type="hidden" id="travelClass" th:value="${travelClass}">
+<input type="hidden" id="type" th:value="${type}">
+<script th:inline="javascript">
+
+    // Get values from controller
+    const ticketId = /*[[${ticketId}]]*/0;
+    const userId = /*[[${userId}]]*/0;
+    const amount = /*[[${amount}]]*/0;
+
+    // Create order automatically when page loads
+    fetch(`/payments/create-order?amount=${amount}&ticketId=${ticketId}&userId=${userId}`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(order => {
+
+        var options = {
+            "key": "rzp_test_S9zcnYb5XxsWxN",
+            "amount": order.amount,
+            "currency": order.currency,
+            "name": "Local Train Booking",
+            "description": "Ticket Payment",
+            "order_id": order.id,
+
+            "handler": function (response){
+
+                fetch("/payments/verify", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                        ticketId: ticketId,
+                        userId: userId,
+                        amount: amount
+                    })
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error("Payment verification failed");
+                    }
+                    return res.text();
+                })
+                .then(bookingId => {
+					
+					var sourceStation = document.getElementById("sourceStation").value;
+					   var destinationStation = document.getElementById("destinationStation").value;
+					   var travelClass = document.getElementById("travelClass").value;
+					   var type = document.getElementById("type").value;
+					   
+					window.location.href =
+					    "/ticket?bookingId=" + bookingId
+					    + "&sourceStation=" + sourceStation
+					    + "&destinationStation=" + destinationStation
+					    + "&travelClass=" + travelClass
+					    + "&type=" + type;
+                })
+                .catch(err => {
+                    alert("Payment failed: " + err.message);
+                });
+
+            }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+    })
+    .catch(err => {
+        alert("Order creation failed");
+    });
+
+</script>
+
+</body>
+</html>

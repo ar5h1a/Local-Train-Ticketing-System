@@ -25,9 +25,22 @@ button { background:#d6336c; color:white; border:none; padding:10px; width:100%;
 
 <h3>Total Price: ₹ <span th:text="${ticket.price}"></span></h3>
 
-<a href="/#">
-    <button>PAY NOW</button>
-</a>
+<form action="http://localhost:8085/payment" method="get">
+
+    <input type="hidden" name="ticketId" th:value="${ticket.ticketId}" />
+    <input type="hidden" name="userId" th:value="${ticket.userId}" />
+    <input type="hidden" name="amount" th:value="${ticket.price}" />
+
+    <input type="hidden" name="sourceStation" th:value="${ticket.sourceStation}" />
+    <input type="hidden" name="destinationStation" th:value="${ticket.destinationStation}" />
+    <input type="hidden" name="travelClass" th:value="${ticket.travelClass}" />
+    <input type="hidden" name="type" th:value="${ticket.type}" />
+
+    <button type="submit">PAY NOW</button>
+</form>
+
+
+
 
 </div>
 </div>

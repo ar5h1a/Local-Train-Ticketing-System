@@ -1,0 +1,5 @@
+package com.localtrain.notification.service;
+
+public interface NotificationService {
+    void sendNotification(Long userId, String type);
+}

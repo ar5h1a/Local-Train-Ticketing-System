@@ -118,5 +118,28 @@ public class PageController {
 
         return "history";
     }
+    
+    @GetMapping("/show-ticket")
+    public String showLatestTicket(Authentication authentication, Model model) {
+
+        Long userId = Long.parseLong(authentication.getName());
+
+        // Fetch tickets for the user
+        List<Ticket> tickets = ticketService.getTicketsByUser(userId);
+
+        if (tickets.isEmpty()) {
+            model.addAttribute("error", "No tickets found");
+            return "no-ticket"; // optional page showing "no ticket found"
+        }
+
+        // Get the latest ticket (assuming tickets are ordered by creation date)
+        Ticket latestTicket = tickets.get(tickets.size() - 1); 
+
+        // Pass the ticket details to the view
+        model.addAttribute("ticket", latestTicket);
+
+        return "show-ticket"; // new Thymeleaf template
+    }
+
 
 }

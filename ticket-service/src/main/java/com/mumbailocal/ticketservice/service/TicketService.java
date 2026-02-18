@@ -3,9 +3,14 @@ import java.time.LocalDate;
 import java.math.BigDecimal;
 import com.mumbailocal.ticketservice.entity.Ticket;
 import com.mumbailocal.ticketservice.repository.TicketRepository;
+
+import ch.qos.logback.core.model.Model;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 import com.mumbailocal.ticketservice.dto.TrainDTO;
 
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -212,5 +217,4 @@ public class TicketService {
                 .distinct()
                 .toList();
     }
-
 }

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Show Ticket</title>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            min-height: 100vh;
+            background-color: #ffe6ee;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            padding-top: 20px;
+        }
+
+        .ticket {
+            width: 420px; background: #fff;
+            border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .ticket-header {
+            background-color: #d6336c;
+            color: white; padding: 25px 20px;
+            text-align: center;
+        }
+
+        .ticket-header h2 {
+            margin: 5px 0; font-weight: 700; font-size: 22px;
+        }
+
+        .train-icon { font-size: 36px; margin-bottom: 5px; }
+
+        .ticket-body { padding: 25px 20px; }
+        .row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 14px; }
+        .label { font-weight: 600; color: #555; }
+        .value { color: #333; font-weight: 500; }
+        .divider { border-top: 2px dashed #ddd; margin: 20px 0; }
+
+        .footer { text-align: center; font-size: 12px; color: #888; padding: 15px; border-top: 1px solid #f0f0f0; }
+
+        .back-btn {
+            position: fixed; top: 20px; right: 20px;
+            padding: 8px 16px; font-size: 14px;
+            background-color: #d6336c; color: white;
+            border: none; border-radius: 8px; cursor: pointer;
+            text-decoration: none; transition: background-color 0.3s;
+        }
+        .back-btn:hover { background-color: #b02a5c; }
+    </style>
+</head>
+<body>
+
+<a href="/home" class="back-btn">← Home</a>
+
+<div class="ticket">
+    <div class="ticket-header">
+        <div class="train-icon">🚆</div>
+        <h2>Digital Train Ticket</h2>
+        <div class="sub-title">Booking Confirmed</div>
+    </div>
+
+    <div class="ticket-body">
+        <div class="row">
+            <span class="label">From</span>
+            <span class="value" th:text="${ticket.sourceStation}"></span>
+        </div>
+        <div class="row">
+            <span class="label">To</span>
+            <span class="value" th:text="${ticket.destinationStation}"></span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+            <span class="label">Class Type</span>
+            <span class="value" th:text="${ticket.travelClass}"></span>
+        </div>
+        <div class="row">
+            <span class="label">Journey Type</span>
+            <span class="value" th:text="${ticket.type}"></span>
+        </div>
+        <div class="row">
+            <span class="label">Train</span>
+            <span class="value">Ordinary</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+            <span class="label">Booking ID</span>
+            <span class="value" th:text="${ticket.ticketId}"></span>
+        </div>
+        <div class="row">
+            <span class="label">Price</span>
+            <span class="value">₹<span th:text="${ticket.price}"></span></span>
+        </div>
+        <div class="row">
+            <span class="label">Valid Till</span>
+            <span class="value" th:text="${ticket.validTill}"></span>
+        </div>
+    </div>
+
+    <div class="footer">
+        Please carry a valid ID proof during travel.
+    </div>
+</div>
+
+</body>
+</html>

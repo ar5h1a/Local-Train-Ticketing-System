@@ -1,78 +1,172 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>UTS Home</title>
-<style>
-body { background:#ffe6ee; font-family:Arial; margin:0;}
-.header { background:#d6336c; color:white; padding:15px; text-align:center;}
-.container { display:flex; justify-content:center; margin-top:30px;}
-.card { background:white; width:420px; padding:25px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
-.menu { display:flex; justify-content:space-between; margin-bottom:20px;}
-.menu a { text-decoration:none; color:#d6336c; font-weight:bold; font-size:13px;}
-button { background:#d6336c; color:white; border:none; padding:10px; width:100%; border-radius:6px; margin-top:15px;}
-select { width:100%; padding:8px; margin-top:5px;}
-.error { color:red; font-size:13px; margin-top:10px;}
-</style>
+    <meta charset="UTF-8">
+    <title>UTS Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* BODY & FONT */
+        body {
+            background: #ffe6ee;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            margin: 0;
+        }
+
+        /* HEADER */
+        .header {
+            background: #d6336c;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* CARD */
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: #fff;
+            width: 450px;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        /* MENU */
+        .menu {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #d6336c;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.3s;
+        }
+
+        .menu a:hover {
+            color: #a31b4d;
+        }
+
+        /* LINE FORM */
+        form select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-top: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        form select:focus {
+            outline: none;
+            border-color: #d6336c;
+            box-shadow: 0 0 5px rgba(214, 51, 108, 0.3);
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        button {
+            background: #d6336c;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #a31b4d;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        /* ICONS */
+        .fa-solid {
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="header">UTS - IR Unreserved Ticketing</div>
+<div class="header"><i class="fa-solid fa-train"></i> UTS - IR Unreserved Ticketing</div>
 
 <div class="container">
-<div class="card">
+    <div class="card">
 
-<div class="menu">
-    <a href="#">Profile</a>
-    <a href="/history">Booking History</a>
-    <a href="#">Show Ticket</a>
-</div>
+        <!-- MENU -->
+        <div class="menu">
+            <a href="#"><i class="fa-solid fa-user"></i> Profile</a>
+            <a href="/history"><i class="fa-solid fa-clock-rotate-left"></i> Booking History</a>
+            <a href="/show-ticket"><i class="fa-solid fa-ticket"></i> Show Ticket</a>
+        </div>
 
-<!-- LINE SELECTION FORM (GET) -->
-<form action="/home" method="get">
-    <label>Line</label>
-    <select name="line" onchange="this.form.submit()">
-        <option value="Western"
-            th:selected="${selectedLine == 'Western'}">Western</option>
-        <option value="Central"
-            th:selected="${selectedLine == 'Central'}">Central</option>
-        <option value="Harbour"
-            th:selected="${selectedLine == 'Harbour'}">Harbour</option>
-    </select>
-</form>
+        <!-- LINE SELECTION FORM -->
+        <form action="/home" method="get">
+            <label><i class="fa-solid fa-route"></i> Line</label>
+            <select name="line" onchange="this.form.submit()">
+                <option value="Western" th:selected="${selectedLine == 'Western'}">Western</option>
+                <option value="Central" th:selected="${selectedLine == 'Central'}">Central</option>
+                <option value="Harbour" th:selected="${selectedLine == 'Harbour'}">Harbour</option>
+            </select>
+        </form>
 
-<br>
+        <!-- BOOKING FORM -->
+        <form action="/details" method="post">
+            <input type="hidden" name="line" th:value="${selectedLine}" />
 
-<!-- MAIN BOOKING FORM (POST) -->
-<form action="/details" method="post">
+            <label><i class="fa-solid fa-location-dot"></i> Source</label>
+            <select name="source" required>
+                <option th:each="station : ${stations}"
+                        th:value="${station}"
+                        th:text="${station}">
+                </option>
+            </select>
 
-    <input type="hidden" name="line" th:value="${selectedLine}" />
+            <label><i class="fa-solid fa-location-crosshairs"></i> Destination</label>
+            <select name="destination" required>
+                <option th:each="station : ${stations}"
+                        th:value="${station}"
+                        th:text="${station}">
+                </option>
+            </select>
 
-    <label>Source</label>
-    <select name="source" required>
-        <option th:each="station : ${stations}"
-                th:value="${station}"
-                th:text="${station}">
-        </option>
-    </select>
+            <button type="submit"><i class="fa-solid fa-money-bill-wave"></i> Get Fare</button>
+        </form>
 
-    <br><br>
+        <!-- ERROR -->
+        <div th:if="${error}" class="error" th:text="${error}"></div>
 
-    <label>Destination</label>
-    <select name="destination" required>
-        <option th:each="station : ${stations}"
-                th:value="${station}"
-                th:text="${station}">
-        </option>
-    </select>
-
-    <button type="submit">GET FARE</button>
-
-</form>
-
-<!-- ERROR DISPLAY -->
-<div th:if="${error}" class="error" th:text="${error}"></div>
-
-</div>
+    </div>
 </div>
 
 </body>

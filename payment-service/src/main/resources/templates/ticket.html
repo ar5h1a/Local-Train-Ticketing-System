@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmed Ticket</title>
+    <style>
+        /* BODY & FONT */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #ffe6ee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        /* TICKET CARD */
+        .ticket {
+            width: 420px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .ticket-header {
+            background-color: #d6336c;
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        .ticket-header h2 {
+            margin: 5px 0;
+            font-weight: 700;
+            font-size: 22px;
+        }
+        .train-icon {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+        .ticket-header .sub-title {
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        /* TICKET BODY */
+        .ticket-body {
+            padding: 25px 20px;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .row .label {
+            font-weight: 600;
+            color: #555;
+        }
+        .row .value {
+            color: #333;
+            font-weight: 500;
+        }
+        .divider {
+            border-top: 2px dashed #ddd;
+            margin: 20px 0;
+        }
+
+        /* STATUS */
+        .status {
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            background-color: #e6f9ec;
+            color: #28a745;
+            margin-top: 15px;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            padding: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+		
+		/* Small top-left button inside ticket card */
+		.back-home-btn {
+		    position: absolute;       /* floating above card */
+		    top: 15px;
+		    left: 15px;
+		    padding: 6px 12px;
+		    background-color: #d6336c;
+		    color: white;
+		    font-size: 12px;
+		    border: none;
+		    border-radius: 6px;
+		    text-decoration: none;
+		    cursor: pointer;
+		    transition: background-color 0.3s;
+		}
+
+		.back-home-btn:hover {
+		    background-color: #b02a5e;
+		}
+
+		.ticket {
+		    position: relative; /* needed for absolute positioning of button */
+		}
+
+    </style>
+	
+	<!-- Place this inside the ticket div, just before the header for top-left placement -->
+	<a href="http://localhost:8083/home" class="back-home-btn">← Home</a>
+
+</head>
+<body>
+
+<div class="ticket">
+    <div class="ticket-header">
+        <div class="train-icon">🚆</div>
+        <h2>Digital Train Ticket</h2>
+        <div class="sub-title">Booking Confirmed</div>
+    </div>
+
+    <div class="ticket-body" id="ticketDetails">
+        <!-- Ticket details will be populated dynamically -->
+    </div>
+
+    <div class="footer">
+        Please carry a valid ID proof during travel.
+    </div>
+	
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get("bookingId");
+
+    if (!bookingId) {
+        document.getElementById("ticketDetails").innerHTML = "<p>Invalid Ticket</p>";
+    } else {
+        fetch(`/payments/by-booking/${bookingId}`)
+        .then(res => res.json())
+        .then(data => {
+
+            // Using URL params if available (from results.html) or fallback
+            const sourceStation = urlParams.get("sourceStation") || data.sourceStation || "N/A";
+            const destinationStation = urlParams.get("destinationStation") || data.destinationStation || "N/A";
+            const travelClass = urlParams.get("travelClass") || data.travelClass || "N/A";
+            const type = urlParams.get("type") || data.type || "Ordinary";
+            const trainType = "Ordinary"; // optional, can be dynamic
+
+            document.getElementById("ticketDetails").innerHTML = `
+                <div class="row">
+                    <span class="label">From</span>
+                    <span class="value">${sourceStation}</span>
+                </div>
+                <div class="row">
+                    <span class="label">To</span>
+                    <span class="value">${destinationStation}</span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="row">
+                    <span class="label">Class Type</span>
+                    <span class="value">${travelClass}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Journey Type</span>
+                    <span class="value">${type}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Train</span>
+                    <span class="value">${trainType}</span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="row">
+                    <span class="label">Booking ID</span>
+                    <span class="value">${data.bookingId}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Amount Paid</span>
+                    <span class="value">₹${data.amount}</span>
+                </div>
+                <div class="row">
+                    <span class="label">Payment Time</span>
+                    <span class="value">${data.paymentTime}</span>
+                </div>
+
+                <div class="status">${data.status}</div>
+            `;
+        })
+        .catch(() => {
+            document.getElementById("ticketDetails").innerHTML = "<p>Unable to load ticket details</p>";
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,31 +1,152 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Booking History</title>
+    <meta charset="UTF-8">
+    <title>Booking History</title>
+    <style>
+        /* BODY & FONT */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #ffe6ee;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+        }
+
+        /* CONTAINER */
+        .container {
+            width: 800px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #d6336c;
+            margin-bottom: 20px;
+        }
+
+        /* TICKET CARD */
+        .ticket-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .ticket-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .divider {
+            border-top: 2px dashed #ddd;
+            margin: 15px 0;
+        }
+
+        /* BACK BUTTON */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: #d6336c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #b02a5c;
+        }
+
+        /* TABLE FALLBACK (if needed) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8cce4;
+            color: #d6336c;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9e6f0;
+        }
+
+    </style>
 </head>
 <body>
-<h2>Booking History</h2>
 
-<table border="1">
-<tr>
-<th>Source</th>
-<th>Destination</th>
-<th>Line</th>
-<th>Price</th>
-<th>Valid Till</th>
-</tr>
+<a href="/home" class="back-btn">← Home</a>
 
-<tr th:each="ticket : ${tickets}">
-<td th:text="${ticket.sourceStation}"></td>
-<td th:text="${ticket.destinationStation}"></td>
-<td th:text="${ticket.line}"></td>
-<td th:text="${ticket.price}"></td>
-<td th:text="${ticket.validTill}"></td>
-</tr>
+<div class="container">
+    <h2>Booking History</h2>
 
-</table>
-
-<a href="/home">Back to Home</a>
+    <div th:each="ticket : ${tickets}" class="ticket-card">
+        <div class="row">
+            <span class="label">From</span>
+            <span class="value" th:text="${ticket.sourceStation}"></span>
+        </div>
+        <div class="row">
+            <span class="label">To</span>
+            <span class="value" th:text="${ticket.destinationStation}"></span>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+            <span class="label">Line</span>
+            <span class="value" th:text="${ticket.line}"></span>
+        </div>
+        <div class="row">
+            <span class="label">Class</span>
+            <span class="value" th:text="${ticket.travelClass}"></span>
+        </div>
+        <div class="row">
+            <span class="label">Price</span>
+            <span class="value">₹<span th:text="${ticket.price}"></span></span>
+        </div>
+        <div class="row">
+            <span class="label">Valid Till</span>
+            <span class="value" th:text="${ticket.validTill}"></span>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+            <span class="label">Booking ID</span>
+            <span class="value" th:text="${ticket.ticketId}"></span>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
