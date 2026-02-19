@@ -46,6 +46,7 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.11.5</version>
         </dependency>
+<<<<<<< Updated upstream
 
 	    <!-- Actuator (optional logging) -->
 	    <dependency>
@@ -79,6 +80,14 @@
 	    	<artifactId>auth-service</artifactId>
 	    	<version>0.0.1-SNAPSHOT</version>
 	    </dependency>
+=======
+		<dependency>
+		    <groupId>com.github.vladimir-bukhtoyarov</groupId>
+		    <artifactId>bucket4j-core</artifactId>
+		    <version>7.6.0</version>
+		</dependency>
+
+>>>>>>> Stashed changes
     </dependencies>
 
 	<dependencyManagement>

@@ -53,6 +53,7 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
+<<<<<<< Updated upstream
 	<classpathentry kind="lib" path="C:/Users/arshia/.m2/repository/org/springframework/boot/spring-boot-test/4.0.2/spring-boot-test-4.0.2.jar" sourcepath="C:/Users/arshia/.m2/repository/org/springframework/boot/spring-boot-test/4.0.2/spring-boot-test-4.0.2-sources.jar">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
@@ -63,5 +64,7 @@
 			<attribute name="maven.scope" value="test"/>
 		</attributes>
 	</classpathentry>
+=======
+>>>>>>> Stashed changes
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
