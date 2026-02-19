@@ -1,7 +1,10 @@
 package com.mumbailocal.ticketservice.service;
 import java.time.LocalDate;
 import java.math.BigDecimal;
+
+import com.mumbailocal.ticketservice.entity.ProcessedRequest;
 import com.mumbailocal.ticketservice.entity.Ticket;
+import com.mumbailocal.ticketservice.repository.ProcessedRequestRepository;
 import com.mumbailocal.ticketservice.repository.TicketRepository;
 
 import ch.qos.logback.core.model.Model;
@@ -21,6 +24,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class TicketService {
+	@Autowired
+	private ProcessedRequestRepository processedRequestRepository;
+
 	
     @Autowired
     private TicketRepository ticketRepository;
@@ -34,7 +40,8 @@ public class TicketService {
 
 
     // Issue a ticket based on type
-    public Ticket issueTicket( Long userId,
+    public Ticket issueTicket( String requestId,
+    		Long userId,
             String sourceStation,
             String destinationStation,
             String line,
@@ -53,6 +60,14 @@ public class TicketService {
 		 * System.out.println("TYPE RECEIVED = [" + type + "]");
 		 */
 
+    	try {
+    	    ProcessedRequest processed = new ProcessedRequest(requestId, userId);
+    	    processedRequestRepository.save(processed);
+    	} catch (Exception e) {
+    	    throw new IllegalStateException("Duplicate request detected. Possible replay attack.");
+    	}
+
+    	
     	String url = trainServiceBaseUrl + "/train/by-line?line=" + line;
         System.out.println("Calling Train Service URL: " + trainServiceBaseUrl);
         TrainDTO[] train = restTemplate.getForObject(url, TrainDTO[].class);
@@ -66,7 +81,19 @@ public class TicketService {
         }
 
     	LocalDate now = LocalDate.now();
+    	
     	LocalDate validTill;
+    	
+    	// Prevent duplicate same-day booking for same route
+    	if (ticketRepository.existsByUserIdAndSourceStationAndDestinationStationAndValidFrom(
+    	        userId,
+    	        sourceStation,
+    	        destinationStation,
+    	        now)) {
+
+    	    throw new IllegalStateException("You have already booked this route today.");
+    	}
+
     
     	switch (type.toLowerCase()) {
         case "single":
@@ -132,8 +159,11 @@ public class TicketService {
         ticket.setSourceStation(sourceStation);
         ticket.setDestinationStation(destinationStation);
 
-        return ticketRepository.save(ticket);
-    }
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+       
+     return savedTicket;
+     }
 
     private int calculateStationsCrossed(
             List<String> stations,

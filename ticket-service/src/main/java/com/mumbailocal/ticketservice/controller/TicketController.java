@@ -35,6 +35,7 @@ public class TicketController {
 
     @PostMapping("/issue")
     public ResponseEntity<Ticket> issueTicket(
+            @RequestHeader("X-Request-Id") String requestId,
             @RequestParam String sourceStation,
             @RequestParam String destinationStation,
             @RequestParam String line,
@@ -57,6 +58,7 @@ public class TicketController {
 
 
         Ticket ticket = ticketService.issueTicket(
+        		requestId,
                 userId,
                 sourceStation,
                 destinationStation,

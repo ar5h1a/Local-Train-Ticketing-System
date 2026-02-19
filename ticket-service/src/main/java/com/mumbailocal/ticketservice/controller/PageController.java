@@ -82,21 +82,36 @@ public class PageController {
                           @RequestParam(defaultValue = "1") int numberOfPersons,
                           Model model) {
 
+        String requestId = java.util.UUID.randomUUID().toString();
         Long userId = Long.parseLong(authentication.getName());
 
-        Ticket ticket = ticketService.issueTicket(
-                userId,
-                source,
-                destination,
-                line,
-                type,
-                travelClass,
-                numberOfPersons
-        );
+        try {
+            Ticket ticket = ticketService.issueTicket(
+                    requestId,
+                    userId,
+                    source,
+                    destination,
+                    line,
+                    type,
+                    travelClass,
+                    numberOfPersons
+            );
 
-        model.addAttribute("ticket", ticket);
+            model.addAttribute("ticket", ticket);
+            return "results";
 
-        return "results";
+        } catch (IllegalStateException e) {
+
+            // Send user-friendly error message
+            model.addAttribute("errorMessage", e.getMessage());
+
+            // Return back to details page instead of crashing
+            model.addAttribute("source", source);
+            model.addAttribute("destination", destination);
+            model.addAttribute("line", line);
+
+            return "details";
+        }
     }
 
 

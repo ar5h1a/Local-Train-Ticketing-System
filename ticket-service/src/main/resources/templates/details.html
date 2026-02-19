@@ -14,7 +14,9 @@ select, input { width:100%; padding:8px; margin-top:5px;}
 
 <div class="container">
 <div class="card">
-
+	<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
+	    <p th:text="${errorMessage}"></p>
+	</div>
 <form action="/results" method="post">
 
 <input type="hidden" name="source" th:value="${source}">
